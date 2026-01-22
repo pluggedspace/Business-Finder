@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Finder Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --success-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+            color: #333;
+            padding-top: 20px;
+            padding-bottom: 40px;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .card {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.5rem 1.5rem;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background-color: #06d6a0;
+            border-color: #06d6a0;
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.5rem 1.5rem;
+        }
+        
+        .btn-success:hover {
+            background-color: #05b187;
+            border-color: #05b187;
+            transform: translateY(-2px);
+        }
+        
+        .table-responsive {
+            border-radius: var(--border-radius);
+        }
+        
+        .table thead th {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem;
+        }
+        
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        
+        .table tbody tr {
+            transition: var(--transition);
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .badge {
+            border-radius: 6px;
+            padding: 0.4rem 0.6rem;
+            font-weight: 500;
+        }
+        
+        .search-form, .filter-form {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem;
+            border: 1px solid #e1e5ee;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+        }
+        
+        .lead-count {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .mobile-card {
+            display: none;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .mobile-card .lead-info {
+            margin-bottom: 0.75rem;
+        }
+        
+        .mobile-card .lead-info:last-child {
+            margin-bottom: 0;
+        }
+        
+        .mobile-card .label {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .stats-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 768px) {
+            .table-container {
+                display: none;
+            }
+            
+            .mobile-card {
+                display: block;
+            }
+            
+            .action-buttons {
+                justify-content: center;
+                margin-top: 1rem;
+            }
+            
+            .card-header h5 {
+                font-size: 1.1rem;
+            }
+            
+            .dashboard-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        .needs-list {
+            max-height: 120px;
+            overflow-y: auto;
+            padding-left: 1rem;
+            margin-bottom: 0;
+        }
+        
+        .needs-list li {
+            margin-bottom: 0.25rem;
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1055;
+            border-radius: var(--border-radius);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2><i class="fas fa-chart-line me-2"></i>Business Finder Dashboard</h2>
+                    <p class="mb-0">Discover and analyze business opportunities</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <span class="lead-count"><i class="fas fa-briefcase me-1"></i> {{ leads.count }} Leads</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card stats-card">
+                    <div class="stats-number" id="total-leads">{{ leads.count }}</div>
+                    <div class="stats-label">Total Leads</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card stats-card">
+                    <div class="stats-number" id="analyzed-leads">{{ analyzed_count }}</div>
+                    <div class="stats-label">Analyzed</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card stats-card">
+                    <div class="stats-number" id="websites-count">{{ websites_count }}</div>
+                    <div class="stats-label">With Websites</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card stats-card">
+                    <div class="stats-number" id="high-rating">{{ high_rating_count }}</div>
+                    <div class="stats-label">High Rating (4+)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Card -->
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-search me-2"></i>Find New Businesses</h5>
+            </div>
+            <div class="card-body">
+                <form id="search-business-form">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <label for="search-query" class="form-label">Business Type or Name</label>
+                            <input type="text" id="search-query" class="form-control" placeholder="e.g., Restaurants, Tech companies..." required>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="search-country" class="form-label">Country</label>
+                            <input type="text" id="search-country" class="form-control" placeholder="e.g., United States, Germany..." required>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-plus-circle me-1"></i> Search & Create
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <div id="search-results" class="mt-3"></div>
+                <div class="loading-spinner" id="search-loading">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Searching for businesses... This may take a moment.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Card -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Existing Leads</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" class="filter-form">
+                    <div class="row g-2">
+                        <div class="col-md-5">
+                            <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search by name...">
+                        </div>
+                        <div class="col-md-5">
+                            <input type="text" name="country" value="{{ country }}" class="form-control" placeholder="Filter by country...">
+                        </div>
+                        <div class="col-md-2">
+                            <div class="d-grid gap-2 d-md-flex">
+                                <button type="submit" class="btn btn-primary flex-fill">
+                                    <i class="fas fa-filter me-1"></i> Filter
+                                </button>
+                                <a href="?" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i> Clear
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Leads Card -->
+        <div class="card">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-list me-2"></i>Business Leads</h5>
+                <span class="badge bg-light text-dark">New leads will appear here</span>
+            </div>
+            <div class="card-body p-0">
+                <!-- Desktop Table -->
+                <div class="table-container">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Location</th>
+                                    <th>Contact</th>
+                                    <th>Rating</th>
+                                    <th>AI Needs</th>
+                                    <th>Source</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for lead in leads %}
+                                <tr id="lead-{{ lead.id }}">
+                                    <td>
+                                        <strong>{{ lead.name }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">{{ lead.category|default:"Not specified" }}</span>
+                                    </td>
+                                    <td>{{ lead.address|truncatechars:30|default:"-" }}</td>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            {% if lead.website %}
+                                            <a href="{{ lead.website }}" target="_blank" class="text-primary mb-1">
+                                                <i class="fas fa-globe me-1"></i> Website
+                                            </a>
+                                            {% endif %}
+                                            {% if lead.phone %}
+                                            <span class="text-muted small">
+                                                <i class="fas fa-phone me-1"></i> {{ lead.phone }}
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if lead.rating %}
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge bg-warning text-dark me-1">{{ lead.rating }}</span>
+                                            <i class="fas fa-star text-warning"></i>
+                                        </div>
+                                        {% else %}
+                                        <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="needs">
+                                        {% if lead.needs %}
+                                        <ul class="needs-list">
+                                            {% for need in lead.needs %}
+                                            <li>{{ need }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% else %}
+                                        <span class="text-muted">Not analyzed</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ lead.source|default:"api" }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-info analyze-btn" data-id="{{ lead.id }}">
+                                                <i class="fas fa-brain me-1"></i> Analyze
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted py-4">
+                                        <i class="fas fa-inbox fa-2x mb-3 d-block"></i>
+                                        No leads found. Use the search form above to find new businesses!
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Mobile Cards -->
+                <div class="mobile-leads-container">
+                    {% for lead in leads %}
+                    <div class="mobile-card" id="mobile-lead-{{ lead.id }}">
+                        <div class="lead-info">
+                            <span class="label">Name:</span> {{ lead.name }}
+                        </div>
+                        <div class="lead-info">
+                            <span class="label">Category:</span> {{ lead.category|default:"Not specified" }}
+                        </div>
+                        <div class="lead-info">
+                            <span class="label">Address:</span> {{ lead.address|default:"-" }}
+                        </div>
+                        <div class="lead-info">
+                            <span class="label">Contact:</span>
+                            {% if lead.website %}
+                            <a href="{{ lead.website }}" target="_blank" class="text-primary me-2">
+                                <i class="fas fa-globe me-1"></i> Website
+                            </a>
+                            {% endif %}
+                            {% if lead.phone %}
+                            <span class="text-muted">
+                                <i class="fas fa-phone me-1"></i> {{ lead.phone }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div class="lead-info">
+                            <span class="label">Rating:</span>
+                            {% if lead.rating %}
+                            <span class="badge bg-warning text-dark">{{ lead.rating }}/5</span>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </div>
+                        <div class="lead-info">
+                            <span class="label">AI Needs:</span>
+                            <div class="needs">
+                                {% if lead.needs %}
+                                <ul class="needs-list">
+                                    {% for need in lead.needs %}
+                                    <li>{{ need }}</li>
+                                    {% endfor %}
+                                </ul>
+                                {% else %}
+                                <span class="text-muted">Not analyzed</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="lead-info">
+                            <span class="label">Source:</span>
+                            <span class="badge bg-info">{{ lead.source|default:"api" }}</span>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-info analyze-btn" data-id="{{ lead.id }}">
+                                <i class="fas fa-brain me-1"></i> Analyze
+                            </button>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="mobile-card text-center text-muted py-4">
+                        <i class="fas fa-inbox fa-2x mb-3 d-block"></i>
+                        No leads found. Use the search form above to find new businesses!
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast for notifications -->
+    <div class="toast align-items-center text-white bg-success border-0" id="successToast" role="alert">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessage">Success!</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Function to get CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Initialize Bootstrap toast
+        const toastEl = document.getElementById('successToast');
+        const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+
+        // Show toast message
+        function showToast(message, type = 'success') {
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            
+            // Change toast color based on type
+            if (type === 'error') {
+                toastEl.classList.remove('bg-success');
+                toastEl.classList.add('bg-danger');
+            } else {
+                toastEl.classList.remove('bg-danger');
+                toastEl.classList.add('bg-success');
+            }
+            
+            toast.show();
+        }
+
+        // Handle new business search
+        document.getElementById('search-business-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const query = document.getElementById('search-query').value;
+            const country = document.getElementById('search-country').value;
+            const resultsDiv = document.getElementById('search-results');
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const loadingSpinner = document.getElementById('search-loading');
+            
+            if (!query || !country) {
+                resultsDiv.innerHTML = '<div class="alert alert-warning">Please enter both search query and country.</div>';
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Searching...';
+            resultsDiv.innerHTML = '';
+            loadingSpinner.style.display = 'block';
+            
+            fetch(`/api/search/?query=${encodeURIComponent(query)}&country=${encodeURIComponent(country)}`)
+                .then(response => response.json())
+                .then(data => {
+                    loadingSpinner.style.display = 'none';
+                    
+                    if (data.results && data.results.length > 0) {
+                        let html = '<div class="alert alert-success">';
+                        html += '<strong>Success!</strong> Created ' + data.total_created + ' new leads:';
+                        html += '<ul class="mb-0 mt-2">';
+                        data.results.forEach(function(lead) {
+                            html += '<li>' + lead.name + ' - ' + lead.category + '</li>';
+                        });
+                        html += '</ul></div>';
+                        resultsDiv.innerHTML = html;
+                        
+                        showToast(`Successfully created ${data.total_created} new leads!`);
+                        
+                        // Reload the page after a short delay to show new leads
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        resultsDiv.innerHTML = '<div class="alert alert-warning">No businesses found for your search criteria.</div>';
+                    }
+                })
+                .catch(error => {
+                    loadingSpinner.style.display = 'none';
+                    console.error('Error:', error);
+                    resultsDiv.innerHTML = '<div class="alert alert-danger">Error searching for businesses. Please try again.</div>';
+                    showToast('Error searching for businesses', 'error');
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-plus-circle me-1"></i> Search & Create';
+                });
+        });
+
+        // Handle lead analysis
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('analyze-btn') || e.target.closest('.analyze-btn')) {
+                const btn = e.target.classList.contains('analyze-btn') ? e.target : e.target.closest('.analyze-btn');
+                const leadId = btn.getAttribute('data-id');
+                const row = document.getElementById('lead-' + leadId);
+                const mobileCard = document.getElementById('mobile-lead-' + leadId);
+                
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Analyzing...';
+                
+                fetch(`/api/analyze/${leadId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    let needsHtml = '<ul class="needs-list">';
+                    if (Array.isArray(data.needs)) {
+                        data.needs.forEach(function(need) {
+                            needsHtml += '<li>' + need + '</li>';
+                        });
+                    } else {
+                        needsHtml += '<li>' + data.needs + '</li>';
+                    }
+                    needsHtml += '</ul>';
+                    
+                    // Update desktop view
+                    if (row) {
+                        row.querySelector('.needs').innerHTML = needsHtml;
+                    }
+                    
+                    // Update mobile view
+                    if (mobileCard) {
+                        mobileCard.querySelector('.needs').innerHTML = needsHtml;
+                    }
+                    
+                    btn.innerHTML = '<i class="fas fa-check me-1"></i> Analysis Complete';
+                    btn.classList.remove('btn-info');
+                    btn.classList.add('btn-success');
+                    
+                    showToast(`Analysis completed for ${data.name}`);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    const errorMsg = 'Error analyzing lead. Please try again.';
+                    
+                    if (row) {
+                        row.querySelector('.needs').innerHTML = '<span class="text-danger">' + errorMsg + '</span>';
+                    }
+                    
+                    if (mobileCard) {
+                        mobileCard.querySelector('.needs').innerHTML = '<span class="text-danger">' + errorMsg + '</span>';
+                    }
+                    
+                    btn.innerHTML = '<i class="fas fa-brain me-1"></i> Try Again';
+                    showToast('Error analyzing lead', 'error');
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                });
+            }
+        });
+
+        // Calculate and update stats (this would typically come from the backend)
+        document.addEventListener('DOMContentLoaded', function() {
+            // These values would normally come from the backend
+            // For demonstration, we're calculating them client-side
+            const leads = {{ leads.count }};
+            const analyzedCount = document.querySelectorAll('.needs-list').length;
+            const websitesCount = document.querySelectorAll('a[href*="//"]').length;
+            const highRatingCount = document.querySelectorAll('.badge.bg-warning').length;
+            
+            document.getElementById('analyzed-leads').textContent = analyzedCount;
+            document.getElementById('websites-count').textContent = websitesCount;
+            document.getElementById('high-rating').textContent = highRatingCount;
+        });
+    </script>
+</body>
+</html>

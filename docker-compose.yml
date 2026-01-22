@@ -1,0 +1,42 @@
+services:
+  web:
+    container_name: quant-web
+    build: .
+    command: gunicorn businessfinder.wsgi:application --bind 0.0.0.0:8010 --timeout 120
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+    env_file:
+      - .env
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - internal_network
+      - nginx-proxy-net
+
+  db:
+    image: postgres:15-alpine
+    container_name: BF-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - internal_network
+    restart: unless-stopped
+
+
+networks:
+  internal_network:
+    driver: bridge
+  nginx-proxy-net:
+    external: true
+
+volumes:
+  pgdata:
+  static_volume:
